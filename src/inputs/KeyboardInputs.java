@@ -5,6 +5,8 @@ import main.GamePanel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static utilz.Constants.Directions.*;
+
 // Xử lý sự kiện bàn phím
 public class KeyboardInputs implements KeyListener {
     private GamePanel gamePanel;
@@ -13,28 +15,22 @@ public class KeyboardInputs implements KeyListener {
         this.gamePanel = gamePanel;
     }
 
-    ///
     /// Thay đổi vị trí của nhân vật khi bấm các nút W, A, S, D
     /// Các phím W, A, S, D hoặc các phím mũi tên được ánh xạ để di chuyển lên, xuống, trái, phải.
-    ///
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:
-            case KeyEvent.VK_LEFT:
-                gamePanel.changeXDelta(-5);
+                gamePanel.setDirection(LEFT);
                 break;
             case KeyEvent.VK_S:
-            case KeyEvent.VK_DOWN:
-                gamePanel.changeYDelta(5);
+                gamePanel.setDirection(DOWN);
                 break;
             case KeyEvent.VK_D:
-            case KeyEvent.VK_RIGHT:
-                gamePanel.changeXDelta(5);
+                gamePanel.setDirection(RIGHT);
                 break;
             case KeyEvent.VK_W:
-            case KeyEvent.VK_UP:
-                gamePanel.changeYDelta(-5);
+                gamePanel.setDirection(UP);
                 break;
         }
     }
@@ -47,6 +43,13 @@ public class KeyboardInputs implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_W:
+                gamePanel.setMoving(false);
+                break;
+        }
     }
 }
