@@ -3,133 +3,45 @@ package main;
 import inputs.KeyboardInputs;
 import inputs.MouseInputs;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 
-import static utilz.Constants.PlayerConstants.*;
-import static utilz.Constants.Directions.*;
-
-// Vẽ hình ảnh của game
+// Vẽ hình ảnh của trò chơi và xử lý các sự kiện chuột, bàn phím.
 public class GamePanel extends JPanel {
-    // Lưu tọa độ của đối tượng
-    private float xDelta = 100, yDelta = 100;
-    private int animationTick, animationIndex, animationSpeed = 15;
+    private final MouseInputs mouseInputs; // Đối tượng để xử lý sự kiện chuột
+    private Game game; // Tham chiếu đến đối tượng Game
 
-    private final MouseInputs mouseInputs;
-    private final KeyboardInputs keyboardInputs;
-
-    private int playerAction = IDLE;
-    private int playerDirection = -1;
-
-    private boolean moving = false;
-
-    private BufferedImage img;
-    private BufferedImage[][] animations;
-
-    public GamePanel() {
-        mouseInputs = new MouseInputs(this);
-        keyboardInputs = new KeyboardInputs(this);
-        importImg();
-        loadAnimations();
-        setPanelSize();
-        addKeyListener(keyboardInputs);
-        addMouseListener(mouseInputs);
-        addMouseMotionListener(mouseInputs);
+    // Constructor
+    public GamePanel(Game game) {
+        this.game = game;
+        mouseInputs = new MouseInputs(this); // Khởi tạo MouseInputs
+        setPanelSize(); // Thiết lập kích thước cho panel
+        addKeyListener(new KeyboardInputs(this)); // Thêm lắng nghe sự kiện bàn phím
+        addMouseListener(mouseInputs); // Thêm lắng nghe sự kiện chuột
+        addMouseMotionListener(mouseInputs); // Thêm lắng nghe sự kiện di chuyển chuột
     }
 
-    // Vẽ hình ảnh
+    // Phương thức vẽ hình ảnh lên panel
     @Override
     public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        updateAnimations();
-        setAnimations();
-        updatePosition();
-        graphics.drawImage(animations[playerAction][animationIndex], (int) xDelta, (int) yDelta, 112, 70, null);
+        super.paintComponent(graphics); // Gọi phương thức cha để vẽ nền
+        game.render(graphics); // Gọi phương thức render của đối tượng Game để vẽ trò chơi
     }
 
     // Thiết lập kích thước panel
     public void setPanelSize() {
-        Dimension size = new Dimension(1120, 640);
-        setMinimumSize(size);
-        setPreferredSize(size);
-        setMaximumSize(size);
+        Dimension size = new Dimension(1120, 640); // Đặt kích thước cho panel
+        setMinimumSize(size); // Kích thước tối thiểu
+        setPreferredSize(size); // Kích thước ưa thích
+        setMaximumSize(size); // Kích thước tối đa
     }
 
-    // Nhập hình ảnh
-    public void importImg() {
-        try (InputStream is = getClass().getResourceAsStream("/res/player_sprites.png")) {
-            if (is == null) {
-                throw new IllegalArgumentException("Resource not found: /res/player_sprites.png");
-            }
-            img = ImageIO.read(is);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading image", e);
-        }
+    // Phương thức cập nhật trò chơi
+    public void updateGame() {
+        // Cập nhật trạng thái trò chơi nếu cần
     }
 
-    // Tải hoạt ảnh
-    public void loadAnimations() {
-        animations = new BufferedImage[9][6];
-        for (int j = 0; j < animations.length; j++) {
-            for (int i = 0; i < animations[j].length; i++) {
-                animations[j][i] = img.getSubimage(i * 64, j * 40, 64, 40);
-            }
-        }
-    }
-
-    // Cập nhật hoạt ảnh
-    public void updateAnimations() {
-        animationTick++;
-        if (animationTick >= animationSpeed) {
-            animationTick = 0;
-            animationIndex++;
-            if (animationIndex >= getSpriteAmount(playerAction)) {
-                animationIndex = 0;
-            }
-        }
-    }
-
-    // Thiết lập trạng thái hoạt ảnh
-    public void setAnimations() {
-        if (moving) {
-            playerAction = RUNNING;
-        } else {
-            playerAction = IDLE;
-        }
-    }
-
-    // Cập nhật vị trí của nhân vật
-    public void updatePosition() {
-        if (moving) {
-            switch (playerDirection) {
-                case LEFT:
-                    xDelta -= 2;
-                    break;
-                case RIGHT:
-                    xDelta += 2;
-                    break;
-                case UP:
-                    yDelta -= 2;
-                    break;
-                case DOWN:
-                    yDelta += 2;
-                    break;
-            }
-        }
-    }
-
-    // Thiết lập hướng di chuyển
-    public void setDirection(int direction) {
-        this.playerDirection = direction;
-        moving = true;
-    }
-
-    // Thiết lập trạng thái di chuyển
-    public void setMoving(boolean moving) {
-        this.moving = moving;
+    public Game getGame() {
+        return game;
     }
 }
