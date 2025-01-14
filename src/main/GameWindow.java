@@ -10,10 +10,10 @@ public class GameWindow extends JFrame {
     public GameWindow(GamePanel gamePanel) {
         jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setLocationRelativeTo(null);
         jFrame.add(gamePanel);
         jFrame.setResizable(false);
         jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);
         // Lắng nghe sự kiện mất và có lại tiêu điểm của cửa sổ
         jFrame.addWindowFocusListener(new WindowFocusListener() {
